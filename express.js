@@ -5,10 +5,7 @@ const path = require('path');
 const QRCode = require('qrcode');
 const fs = require('fs');
 const app = express();
-// const port = 3000;
-
-// 새로운 URL
-const baseURL = 'https://deidynamya.github.io/qr'; // 원하는 URL로 변경하세요
+const port = 3000;
 
 // Multer 설정
 const storage = multer.diskStorage({
@@ -51,7 +48,7 @@ app.post('/upload', upload.single('filter'), async (req, res) => {
       const qrCodePath = path.join(__dirname, `public/qr_codes/${filterName}_qr.png`);
       
       // QR 코드 생성
-      const qrData = `${baseURL}/public/ar.html?fileUrl=${baseURL}/public/filters/${req.file.filename}`;
+      const qrData = `https://deidynamya.github.io/qr/public/ar.html?fileUrl=https://deidynamya.github.io/qr/public/filters/${req.file.filename}`;
       await QRCode.toFile(qrCodePath, qrData);
       
       res.send(`
@@ -60,7 +57,7 @@ app.post('/upload', upload.single('filter'), async (req, res) => {
           <a href="/admin">Upload another filter</a>
       `);
   } catch (err) {
-    console.error('Error uploading file and generating QR code:', error);
+    console.error('Error uploading file and generating QR code:', err);
     res.status(500).send('Error uploading file and generating QR code.');
   }
 });
@@ -94,7 +91,7 @@ app.get('/user', (req, res) => {
 // 필터 이미지 제공 엔드포인트
 app.get('/filter/:name', (req, res) => {
   const filterName = req.params.name;
-  const filterPath = path.join(__dirname, 'public', 'filters', `${filterName}.png`);
+  const filterPath = path.join(__dirname, 'public/filters', `${filterName}.png`);
   
   fs.access(filterPath, fs.constants.F_OK, (err) => {
       if (err) {
@@ -108,7 +105,7 @@ app.get('/filter/:name', (req, res) => {
 // QR 코드 생성
 app.post('/generate-qr', async (req, res) => {
   const { filterName } = req.body;
-  const qrCodePath = path.join(__dirname, 'public', 'qr_codes', `${filterName}_qr.png`);
+  const qrCodePath = path.join(__dirname, 'public/qr_codes', `${filterName}_qr.png`);
   const qrData = `myapp://filter?name=${filterName}`; // URL 스킴 사용
   await QRCode.toFile(qrCodePath, qrData);
   res.send({ qrCodePath });
@@ -118,3 +115,4 @@ app.post('/generate-qr', async (req, res) => {
 app.listen(port, '0.0.0.0', () => {
     console.log(`Server running at http://localhost:${port}`);
 });
+
