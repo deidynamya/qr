@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Upload Filter</title>
+  <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+  <h1>Upload Filter</h1>
+  <form action="/admin/upload-filter" method="post" enctype="multipart/form-data">
+    <label for="filterFile">Choose a filter file:</label>
+    <input type="file" id="filterFile" name="filterFile" required>
+    <button type="submit">Upload and Generate QR</button>
+  </form>
+</body>
+</html>

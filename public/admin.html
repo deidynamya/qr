@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Page</title>
+    <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Upload Filter Image</h1>
+        <form id="upload-form" action="/upload" method="post" enctype="multipart/form-data">
+            <input type="file" name="filter" accept="image/png" required>
+            <button type="submit">Upload</button>
+        </form>
+        <div id="feedback"></div>
+    </div>
+    <script src="admin.js"></script>
+</body>
+</html>
+</html>
