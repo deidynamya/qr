@@ -1,4 +1,4 @@
-// server.js
+             // server.js
 const express = require('express');
 const multer = require('multer');
 const path = require('path');
@@ -114,7 +114,3 @@ app.post('/generate-qr', async (req, res) => {
   res.send({ qrCodePath });
 });
 
-// 서버 시작
-app.listen(port, '0.0.0.0', () => {
-    console.log(`Server running at http://localhost:${port}`);
-});
