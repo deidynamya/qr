@@ -10,7 +10,7 @@ const port = 3000;
 // Multer 설정
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
-        cb(null, path.join(__dirname, 'public/filters'));
+        cb(null, path.join(__dirname, 'qr/qr/public/filters'));
     },
     filename: function (req, file, cb) {
         cb(null, path.basename(file.originalname, path.extname(file.originalname)) + path.extname(file.originalname));
@@ -19,21 +19,21 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage });
 
 // Serve static files
-app.use(express.static('public'));
+app.use(express.static('qr/public'));
 
 // 정적 파일 제공
-app.use('/filters', express.static(path.join(__dirname, 'public/filters')));
-app.use('/qr_codes', express.static(path.join(__dirname, 'public/qr_codes')));
-app.use(express.static(path.join(__dirname, 'public')));
+app.use('/filters', express.static(path.join(__dirname, 'qr/public/filters')));
+app.use('/qr_codes', express.static(path.join(__dirname, 'qr/public/qr_codes')));
+app.use(express.static(path.join(__dirname, 'qr/public')));
 
 // 업로드 페이지 제공
 app.get('/admin', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public/admin.html'));
+    res.sendFile(path.join(__dirname, 'qr/public/admin.html'));
 });
 
 // 사용자 페이지 제공
 app.get('/user', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public/user.html'));
+    res.sendFile(path.join(__dirname, 'qr/public/user.html'));
 });
 
 // 파일 업로드 및 QR 코드 생성 라우트
@@ -45,10 +45,10 @@ app.post('/upload', upload.single('filter'), async (req, res) => {
       }
       
       const filterName = path.basename(file.originalname, path.extname(file.originalname));
-      const qrCodePath = path.join(__dirname, `public/qr_codes/${filterName}_qr.png`);
+      const qrCodePath = path.join(__dirname, `qr/public/qr_codes/${filterName}_qr.png`);
       
       // QR 코드 생성
-      const qrData = `https://deidynamya.github.io/qr/public/ar.html?fileUrl=https://deidynamya.github.io/qr/public/filters/${req.file.filename}`;
+      const qrData = `https://deidynamya.github.io/qr/qr/public/ar.html?fileUrl=https://deidynamya.github.io/qr/qr/public/filters/${req.file.filename}`;
       await QRCode.toFile(qrCodePath, qrData);
       
       res.send(`
@@ -69,7 +69,7 @@ app.listen(port, () => {
 // 필터 이미지를 가져오는 API
 app.get('/filter/:name', (req, res) => {
     const filterName = req.params.name;
-    const filterPath = path.join(__dirname, `public/filters/${filterName}.png`);
+    const filterPath = path.join(__dirname, `qr/public/filters/${filterName}.png`);
     
     if (fs.existsSync(filterPath)) {
         res.sendFile(filterPath);
@@ -82,7 +82,7 @@ app.get('/filter/:name', (req, res) => {
 app.get('/user', (req, res) => {
     const filterName = req.query.filter;
     if (filterName) {
-        res.sendFile(path.join(__dirname, 'public/user.html'));
+        res.sendFile(path.join(__dirname, 'qr/public/user.html'));
     } else {
         res.status(400).send('No filter specified.');
     }
@@ -91,7 +91,7 @@ app.get('/user', (req, res) => {
 // 필터 이미지 제공 엔드포인트
 app.get('/filter/:name', (req, res) => {
   const filterName = req.params.name;
-  const filterPath = path.join(__dirname, 'public', 'filters', `${filterName}.png`);
+  const filterPath = path.join(__dirname, 'qr/public', 'filters', `${filterName}.png`);
   
   fs.access(filterPath, fs.constants.F_OK, (err) => {
       if (err) {
@@ -105,7 +105,7 @@ app.get('/filter/:name', (req, res) => {
 // QR 코드 생성
 app.post('/generate-qr', async (req, res) => {
   const { filterName } = req.body;
-  const qrCodePath = path.join(__dirname, 'public', 'qr_codes', `${filterName}_qr.png`);
+  const qrCodePath = path.join(__dirname, 'qr/public', 'qr_codes', `${filterName}_qr.png`);
   const qrData = `myapp://filter?name=${filterName}`; // URL 스킴 사용
   await QRCode.toFile(qrCodePath, qrData);
   res.send({ qrCodePath });
