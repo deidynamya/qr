@@ -51,7 +51,7 @@ app.post('/upload', upload.single('filter'), async (req, res) => {
       const qrCodePath = path.join(__dirname, `public/qr_codes/${filterName}_qr.png`);
       
       // QR 코드 생성
-      const qrData = `${baseURL}/public/ar.html?fileUrl=${baseURL}/filters/${req.file.filename}`;
+      const qrData = `${baseURL}/ar.html?fileUrl=${baseURL}/filters/${req.file.filename}`;
       await QRCode.toFile(qrCodePath, qrData);
       
       res.send(`
