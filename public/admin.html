@@ -10,7 +10,7 @@
     <div class="container">
         <h1>Upload Filter Image</h1>
         <form id="upload-form" action="/upload" method="post" enctype="multipart/form-data">
-            <input type="file" name="filter" accept="image/png" required>
+            <input type="file" name="filter" accept="image/*" required>
             <button type="submit">Upload</button>
         </form>
         <div id="feedback"></div>
