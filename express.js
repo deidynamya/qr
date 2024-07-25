@@ -1,11 +1,11 @@
-             // server.js
+// server.js
 const express = require('express');
 const multer = require('multer');
 const path = require('path');
 const QRCode = require('qrcode');
 const fs = require('fs');
 const app = express();
-const port = 3000;
+// const port = 3000;
 
 // 새로운 URL
 const baseURL = 'https://deidynamya.github.io/qr'; // 원하는 URL로 변경하세요
@@ -51,7 +51,7 @@ app.post('/upload', upload.single('filter'), async (req, res) => {
       const qrCodePath = path.join(__dirname, `public/qr_codes/${filterName}_qr.png`);
       
       // QR 코드 생성
-      const qrData = `${baseURL}/ar.html?fileUrl=${baseURL}/filters/${req.file.filename}`;
+      const qrData = `${baseURL}/public/ar.html?fileUrl=${baseURL}/public/filters/${req.file.filename}`;
       await QRCode.toFile(qrCodePath, qrData);
       
       res.send(`
@@ -114,3 +114,7 @@ app.post('/generate-qr', async (req, res) => {
   res.send({ qrCodePath });
 });
 
+// 서버 시작
+app.listen(port, '0.0.0.0', () => {
+    console.log(`Server running at http://localhost:${port}`);
+});
