@@ -1,20 +1,131 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AR.js with A-Frame</title>
-    <!-- A-Frame -->
-    <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
-    <!-- AR.js for A-Frame -->
-    <script src="https://cdn.jsdelivr.net/gh/AR-js-org/AR.js/aframe/build/aframe-ar.js"></script>
+  <title>AR.js Example</title>
+  <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/gh/AR-js-org/AR.js@3.3.2/aframe/build/aframe-ar.js"></script>
+  <style>
+    /* 기본 스타일 설정 */
+    body {
+      margin: 0;
+      overflow: hidden;
+      touch-action: none; /* 터치 스크린에서 스크롤 방지 */
+    }
+
+    a-scene {
+      width: 100vw;
+      height: 100vh;
+      position: absolute;
+      top: 0;
+      left: 0;
+    }
+
+    /* 오버레이 이미지 스타일 */
+    #overlay {
+      position: absolute;
+      bottom: 10px;
+      left: 10px;
+      width: 40%;
+      height: auto;
+      pointer-events: none;
+      object-fit: contain;
+      opacity: 0.7;
+      z-index: 1; /* AR 콘텐츠 위에 표시 */
+    }
+
+    /* 캡처 버튼 스타일 */
+    #captureButton {
+      position: absolute;
+      bottom: 70px;
+      left: 50%;
+      transform: translateX(-50%);
+      padding: 10px 20px;
+      font-size: 16px;
+      background-color: rgba(0, 0, 0, 0.6);
+      color: white;
+      border: none;
+      border-radius: 5px;
+      z-index: 2; /* AR 콘텐츠 위에 표시 */
+    }
+
+    /* 스크린샷 컨테이너 스타일 */
+    #screenshotContainer {
+      position: absolute;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 2; /* AR 콘텐츠 위에 표시 */
+    }
+
+    /* 다운로드 링크 숨기기 */
+    #downloadLink {
+      display: none;
+    }
+
+    /* 반응형 디자인 */
+    @media (max-width: 600px) {
+      #overlay {
+        width: 50%;
+      }
+      #captureButton {
+        bottom: 60px;
+      }
+    }
+  </style>
 </head>
-<body style="margin: 0; overflow: hidden;">
-    <a-scene embedded arjs>
-        <a-marker preset="hiro">
-            <a-box position='0 0.5 0' material='color: yellow;'></a-box>
-        </a-marker>
-        <a-entity camera></a-entity>
-    </a-scene>
+<body>
+  <a-scene embedded arjs>
+    <a-marker preset="hiro">
+      <a-box position="0 0.5 0" material="color: red;"></a-box>
+    </a-marker>
+    <a-entity camera></a-entity>
+  </a-scene>
+  
+  <img id="overlay" src="https://deidynamya.github.io/qr/public/filters/filters1.png" />
+  <button id="captureButton">Capture</button>
+  <a id="downloadLink" download="screenshot.png">Download Screenshot</a>
+  <div id="screenshotContainer"></div>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function() {
+      const captureButton = document.getElementById('captureButton');
+      const downloadLink = document.getElementById('downloadLink');
+      
+      captureButton.addEventListener('click', () => {
+        const targetElement = document.querySelector('a-scene');
+
+        html2canvas(targetElement).then(canvas => {
+          const ctx = canvas.getContext('2d');
+          const overlayImg = document.getElementById('overlay');
+
+          overlayImg.onload = () => {
+            const overlayWidth = overlayImg.width;
+            const overlayHeight = overlayImg.height;
+            const overlayX = 0;
+            const overlayY = canvas.height - overlayHeight;
+
+            ctx.drawImage(overlayImg, overlayX, overlayY, overlayWidth, overlayHeight);
+
+            const imgURL = canvas.toDataURL('image/png');
+
+            const img = document.createElement('img');
+            img.src = imgURL;
+            img.style.maxWidth = '300px';
+            document.getElementById('screenshotContainer').innerHTML = '';
+            document.getElementById('screenshotContainer').appendChild(img);
+
+            downloadLink.href = imgURL;
+            downloadLink.style.display = 'block';
+            downloadLink.click();
+          };
+
+          if (overlayImg.complete) {
+            overlayImg.onload();
+          }
+        });
+      });
+    });
+  </script>
+  <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
 </body>
 </html>
