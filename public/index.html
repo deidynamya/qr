@@ -3,7 +3,7 @@
 <head>
   <title>AR.js Example</title>
   <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/gh/AR-js-org/AR.js/aframe/build/aframe-ar.js"></script>
+  <script src="https://cdn.jsdelivr.net/gh/AR-js-org/AR.js@3.3.2/aframe/build/aframe-ar.js"></script>
 </head>
 <body style="margin: 0; overflow: hidden;">
   <a-scene embedded arjs>
@@ -24,5 +24,7 @@
       console.log("Window loaded");
     });
   </script>
-</body>
-</html>
+
+  <!-- Hiro 마커 이미지 base64 -->
+  <div style="display: none;">
+    <img id="hiro-marker" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAKAAAABwAQMAAACIi64JAAAAA1BMVEX///+nxBvIAAAAAXRSTlMAQObYZgAAAAFiS0dEAIgFHUgAAAAHdElNRQfkDBcHExEZ9HKaAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAAUUlEQVR42u3BAQEAAACCIP+vbkhAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPyD0AABZgd+PAAAAABJRU5ErkJggg=="/>
