@@ -66,39 +66,9 @@
       transform: scale(0.95); /* 버튼 눌림 효과 */
     }
 
-    /* 스크린샷 컨테이너 스타일 */
-    #screenshotContainer {
-      position: absolute;
-      top: 20px;
-      left: 50%;
-      transform: translateX(-50%);
-      z-index: 2; /* AR 콘텐츠 위에 표시 */
-    }
-
     /* 다운로드 링크 숨기기 */
     #downloadLink {
       display: none;
-    }
-
-    /* 캡처 번호 텍스트 */
-    .capture-number {
-      position: absolute;
-      bottom: 10px;
-      left: 50%;
-      transform: translateX(-50%);
-      font-size: 24px;
-      color: white;
-      z-index: 2; /* AR 콘텐츠 위에 표시 */
-    }
-
-    /* 반응형 디자인 */
-    @media (max-width: 600px) {
-      #overlay {
-        width: 50%;
-      }
-      #captureButton {
-        bottom: 60px;
-      }
     }
   </style>
 </head>
@@ -113,8 +83,6 @@
   <img id="overlay" src="https://deidynamya.github.io/qr/public/filters/filters1.png" />
   <button id="captureButton">Capture</button>
   <a id="downloadLink" download="screenshot.png">Download Screenshot</a>
-  <div id="screenshotContainer"></div>
-  <div id="captureNumber" class="capture-number">1</div>
 
   <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
   <script>
@@ -122,7 +90,6 @@
       const captureButton = document.getElementById('captureButton');
       const downloadLink = document.getElementById('downloadLink');
       const overlayImg = document.getElementById('overlay');
-      const captureNumberDiv = document.getElementById('captureNumber');
 
       // 드래그 앤 드롭 기능 구현 (터치 지원 추가)
       let isDragging = false;
@@ -207,19 +174,13 @@
 
           const imgURL = canvas.toDataURL('image/png');
 
-          const img = document.createElement('img');
-          img.src = imgURL;
-          img.style.maxWidth = '300px';
-          document.getElementById('screenshotContainer').innerHTML = '';
-          document.getElementById('screenshotContainer').appendChild(img);
-
+          // 다운로드 링크 업데이트
           downloadLink.href = imgURL;
           downloadLink.style.display = 'block';
           downloadLink.click();
 
           // 번호 증가
           captureNumber += 1;
-          captureNumberDiv.textContent = captureNumber;
         }).catch(error => {
           console.error('Error capturing scene:', error);
         });
