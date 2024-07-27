@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -16,9 +16,15 @@
       touch-action: none; /* 터치 스크린에서 스크롤 방지 */
     }
 
-    a-scene {
+    #container {
       width: 100vw;
       height: 100vh;
+      position: relative;
+    }
+
+    a-scene {
+      width: 100%;
+      height: 100%;
       position: absolute;
       top: 0;
       left: 0;
@@ -73,16 +79,17 @@
   </style>
 </head>
 <body>
-  <a-scene embedded arjs>
-    <a-marker preset="hiro">
-      <a-box position="0 0.5 0" material="color: red;"></a-box>
-    </a-marker>
-    <a-entity camera></a-entity>
-  </a-scene>
-  
-  <img id="overlay" src="https://deidynamya.github.io/qr/public/filters/filters1.png" />
-  <button id="captureButton">Capture</button>
-  <a id="downloadLink" download="screenshot.png">Download Screenshot</a>
+  <div id="container">
+    <a-scene embedded arjs>
+      <a-marker preset="hiro">
+        <a-box position="0 0.5 0" material="color: red;"></a-box>
+      </a-marker>
+      <a-entity camera></a-entity>
+    </a-scene>
+    <img id="overlay" src="https://deidynamya.github.io/qr/public/filters/filters1.png" />
+    <button id="captureButton">Capture</button>
+    <a id="downloadLink" download="screenshot.png">Download Screenshot</a>
+  </div>
 
   <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
   <script>
@@ -90,6 +97,7 @@
       const captureButton = document.getElementById('captureButton');
       const downloadLink = document.getElementById('downloadLink');
       const overlayImg = document.getElementById('overlay');
+      const container = document.getElementById('container');
 
       // 드래그 앤 드롭 기능 구현 (터치 지원 추가)
       let isDragging = false;
@@ -142,29 +150,8 @@
       let captureNumber = 1;
 
       captureButton.addEventListener('click', () => {
-        const scene = document.querySelector('a-scene');
-        
-        // A-Frame 씬의 크기를 계산하여 html2canvas에 전달
-        const { offsetWidth: width, offsetHeight: height } = scene;
-
-        html2canvas(scene, { scale: window.devicePixelRatio, width, height }).then(canvas => {
+        html2canvas(container, { scale: window.devicePixelRatio }).then(canvas => {
           const context = canvas.getContext('2d');
-
-          // 오버레이 이미지의 위치와 크기
-          const overlayWidth = overlayImg.width;
-          const overlayHeight = overlayImg.height;
-          const overlayX = parseInt(overlayImg.style.left, 10) || 0;
-          const overlayY = parseInt(overlayImg.style.top, 10) || 0;
-
-          // 오버레이 이미지를 캔버스에 추가
-          const overlayImgCanvas = document.createElement('canvas');
-          overlayImgCanvas.width = overlayWidth;
-          overlayImgCanvas.height = overlayHeight;
-          const overlayContext = overlayImgCanvas.getContext('2d');
-          overlayContext.drawImage(overlayImg, 0, 0);
-
-          // 오버레이 이미지를 메인 캔버스에 추가
-          context.drawImage(overlayImgCanvas, overlayX, overlayY, overlayWidth, overlayHeight);
 
           // 캡처 번호 추가
           context.font = '24px Arial';
