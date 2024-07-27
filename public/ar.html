@@ -150,7 +150,11 @@
       let captureNumber = 1;
 
       captureButton.addEventListener('click', () => {
-        html2canvas(container, { scale: window.devicePixelRatio }).then(canvas => {
+        html2canvas(container, { 
+          scale: window.devicePixelRatio,
+          width: container.offsetWidth,
+          height: container.offsetHeight
+        }).then(canvas => {
           const context = canvas.getContext('2d');
 
           // 캡처 번호 추가
