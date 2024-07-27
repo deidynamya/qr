@@ -5,37 +5,75 @@
   <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
   <script src="https://cdn.jsdelivr.net/gh/AR-js-org/AR.js@3.3.2/aframe/build/aframe-ar.js"></script>
   <style>
+    /* 기본 스타일 설정 */
+    body {
+      margin: 0;
+      overflow: hidden;
+      touch-action: none; /* 터치 스크린에서 스크롤 방지 */
+    }
+
+    a-scene {
+      width: 100vw;
+      height: 100vh;
+      position: absolute;
+      top: 0;
+      left: 0;
+    }
+
+    /* 오버레이 이미지 스타일 */
     #overlay {
       position: absolute;
-      bottom: 0;
-      left: 0;
-      width: 30%; /* 원하는 너비로 조정, 비율 유지 */
-      height: auto; /* 비율 유지를 위해 높이는 자동으로 조정 */
-      pointer-events: none; /* 클릭 등의 이벤트가 하위 요소에 전달되도록 함 */
-      object-fit: contain; /* 이미지가 부모 요소의 크기에 맞게 조정 */
-      opacity: 0.5; /* 투명도 조정 */
+      bottom: 10px;
+      left: 10px;
+      width: 40%;
+      height: auto;
+      pointer-events: none;
+      object-fit: contain;
+      opacity: 0.7;
+      z-index: 1; /* AR 콘텐츠 위에 표시 */
     }
+
+    /* 캡처 버튼 스타일 */
     #captureButton {
       position: absolute;
-      bottom: 60px;
+      bottom: 70px;
       left: 50%;
       transform: translateX(-50%);
       padding: 10px 20px;
       font-size: 16px;
-      z-index: 1; /* 버튼을 최상위로 표시 */
+      background-color: rgba(0, 0, 0, 0.6);
+      color: white;
+      border: none;
+      border-radius: 5px;
+      z-index: 2; /* AR 콘텐츠 위에 표시 */
     }
+
+    /* 스크린샷 컨테이너 스타일 */
     #screenshotContainer {
       position: absolute;
       top: 20px;
       left: 50%;
       transform: translateX(-50%);
+      z-index: 2; /* AR 콘텐츠 위에 표시 */
     }
+
+    /* 다운로드 링크 숨기기 */
     #downloadLink {
-      display: none; /* 기본적으로 숨김 */
+      display: none;
+    }
+
+    /* 반응형 디자인 */
+    @media (max-width: 600px) {
+      #overlay {
+        width: 50%;
+      }
+      #captureButton {
+        bottom: 60px;
+      }
     }
   </style>
 </head>
-<body style="margin: 0; overflow: hidden;">
+<body>
   <a-scene embedded arjs>
     <a-marker preset="hiro">
       <a-box position="0 0.5 0" material="color: red;"></a-box>
@@ -43,16 +81,9 @@
     <a-entity camera></a-entity>
   </a-scene>
   
-  <!-- 필터 이미지 오버레이 -->
-  <img id="overlay" src="http://deidynamya.github.io/qr/public/filters/filters1.png" />
-
-  <!-- 사진 찍기 버튼 -->
+  <img id="overlay" src="https://deidynamya.github.io/qr/public/filters/filters1.png" />
   <button id="captureButton">Capture</button>
-  
-  <!-- 다운로드 링크 -->
   <a id="downloadLink" download="screenshot.png">Download Screenshot</a>
-  
-  <!-- 찍은 사진을 보여줄 영역 -->
   <div id="screenshotContainer"></div>
 
   <script>
@@ -61,50 +92,40 @@
       const downloadLink = document.getElementById('downloadLink');
       
       captureButton.addEventListener('click', () => {
-        // 캡처할 대상 요소
         const targetElement = document.querySelector('a-scene');
 
         html2canvas(targetElement).then(canvas => {
           const ctx = canvas.getContext('2d');
           const overlayImg = document.getElementById('overlay');
 
-          // 오버레이 이미지가 완전히 로드될 때까지 기다림
           overlayImg.onload = () => {
-            // 오버레이 이미지의 크기와 위치
             const overlayWidth = overlayImg.width;
             const overlayHeight = overlayImg.height;
             const overlayX = 0;
             const overlayY = canvas.height - overlayHeight;
 
-            // 캔버스에 오버레이 이미지 추가
             ctx.drawImage(overlayImg, overlayX, overlayY, overlayWidth, overlayHeight);
 
-            // 캔버스를 이미지로 변환
             const imgURL = canvas.toDataURL('image/png');
 
-            // 이미지 미리보기
             const img = document.createElement('img');
             img.src = imgURL;
             img.style.maxWidth = '300px';
-            document.getElementById('screenshotContainer').innerHTML = ''; // Clear previous images
+            document.getElementById('screenshotContainer').innerHTML = '';
             document.getElementById('screenshotContainer').appendChild(img);
 
-            // 다운로드 링크 업데이트
             downloadLink.href = imgURL;
-            downloadLink.style.display = 'block'; // 다운로드 링크 표시
-            downloadLink.click(); // 자동으로 다운로드 시작
+            downloadLink.style.display = 'block';
+            downloadLink.click();
           };
 
-          // 오버레이 이미지가 이미 로드된 경우 직접 처리
           if (overlayImg.complete) {
-            overlayImg.onload(); 
+            overlayImg.onload();
           }
         });
       });
     });
   </script>
-  
-  <!-- html2canvas 라이브러리 -->
   <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
 </body>
 </html>
