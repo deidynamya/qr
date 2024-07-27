@@ -142,29 +142,8 @@
       let captureNumber = 1;
 
       captureButton.addEventListener('click', () => {
-        const scene = document.querySelector('a-scene');
-        
-        // A-Frame 씬의 크기를 계산하여 html2canvas에 전달
-        const { offsetWidth: width, offsetHeight: height } = scene;
-
-        html2canvas(scene, { scale: window.devicePixelRatio, width, height }).then(canvas => {
+        html2canvas(document.body, { scale: window.devicePixelRatio }).then(canvas => {
           const context = canvas.getContext('2d');
-
-          // 오버레이 이미지의 위치와 크기
-          const overlayWidth = overlayImg.width;
-          const overlayHeight = overlayImg.height;
-          const overlayX = parseInt(overlayImg.style.left, 10) || 0;
-          const overlayY = parseInt(overlayImg.style.top, 10) || 0;
-
-          // 오버레이 이미지를 캔버스에 추가
-          const overlayImgCanvas = document.createElement('canvas');
-          overlayImgCanvas.width = overlayWidth;
-          overlayImgCanvas.height = overlayHeight;
-          const overlayContext = overlayImgCanvas.getContext('2d');
-          overlayContext.drawImage(overlayImg, 0, 0);
-
-          // 오버레이 이미지를 메인 캔버스에 추가
-          context.drawImage(overlayImgCanvas, overlayX, overlayY, overlayWidth, overlayHeight);
 
           // 캡처 번호 추가
           context.font = '24px Arial';
