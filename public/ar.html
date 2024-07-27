@@ -80,6 +80,17 @@
       display: none;
     }
 
+    /* 캡처 번호 텍스트 */
+    .capture-number {
+      position: absolute;
+      bottom: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 24px;
+      color: white;
+      z-index: 2; /* AR 콘텐츠 위에 표시 */
+    }
+
     /* 반응형 디자인 */
     @media (max-width: 600px) {
       #overlay {
@@ -103,6 +114,7 @@
   <button id="captureButton">Capture</button>
   <a id="downloadLink" download="screenshot.png">Download Screenshot</a>
   <div id="screenshotContainer"></div>
+  <div id="captureNumber" class="capture-number">1</div>
 
   <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
   <script>
@@ -110,6 +122,7 @@
       const captureButton = document.getElementById('captureButton');
       const downloadLink = document.getElementById('downloadLink');
       const overlayImg = document.getElementById('overlay');
+      const captureNumberDiv = document.getElementById('captureNumber');
 
       // 드래그 앤 드롭 기능 구현 (터치 지원 추가)
       let isDragging = false;
@@ -159,6 +172,8 @@
       overlayImg.addEventListener('mousedown', startDragging);
       overlayImg.addEventListener('touchstart', startDragging);
 
+      let captureNumber = 1;
+
       captureButton.addEventListener('click', () => {
         const scene = document.querySelector('a-scene');
         
@@ -184,6 +199,12 @@
           // 오버레이 이미지를 메인 캔버스에 추가
           context.drawImage(overlayImgCanvas, overlayX, overlayY, overlayWidth, overlayHeight);
 
+          // 캡처 번호 추가
+          context.font = '24px Arial';
+          context.fillStyle = 'white';
+          context.textAlign = 'center';
+          context.fillText(captureNumber, canvas.width / 2, canvas.height - 20);
+
           const imgURL = canvas.toDataURL('image/png');
 
           const img = document.createElement('img');
@@ -195,6 +216,10 @@
           downloadLink.href = imgURL;
           downloadLink.style.display = 'block';
           downloadLink.click();
+
+          // 번호 증가
+          captureNumber += 1;
+          captureNumberDiv.textContent = captureNumber;
         }).catch(error => {
           console.error('Error capturing scene:', error);
         });
