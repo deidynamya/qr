@@ -13,7 +13,7 @@
     body {
       margin: 0;
       overflow: hidden;
-      /* touch-action: none; /* 터치 스크린에서 스크롤 방지 */
+      touch-action: none; /* 터치 스크린에서 스크롤 방지 */
     }
 
     a-scene {
@@ -140,8 +140,9 @@
 
       captureButton.addEventListener('click', () => {
         const scene = document.querySelector('a-scene');
-        
-        html2canvas(scene).then(canvas => {
+
+        // Capture the scene with html2canvas
+        html2canvas(scene, { scale: window.devicePixelRatio }).then(canvas => {
           const context = canvas.getContext('2d');
 
           // 오버레이 이미지의 위치와 크기
@@ -174,13 +175,8 @@
         }).catch(error => {
           console.error('Error capturing scene:', error);
         });
-
-                  // 오버레이 이미지가 이미 로드된 경우 직접 처리
-                  if (overlayImg.complete) {
-            overlayImg.onload(); 
-          }
-        });
       });
+    });
   </script>
 </body>
 </html>
