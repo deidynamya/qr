@@ -1,9 +1,13 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>AR.js Example</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AR View</title>
+  <!-- A-Frame Library -->
   <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/gh/AR-js-org/AR.js@3.3.2/aframe/build/aframe-ar.js"></script>
+  <!-- AR.js for A-Frame -->
+  <script src="https://cdn.jsdelivr.net/gh/AR-js-org/AR.js/aframe/build/aframe-ar.js"></script>
   <style>
     /* 기본 스타일 설정 */
     body {
@@ -25,12 +29,13 @@
       position: absolute;
       bottom: 10px;
       left: 10px;
-      width: 40%;
+      width: 30%;
       height: auto;
-      pointer-events: none;
+      pointer-events: all;
       object-fit: contain;
-      opacity: 0.7;
+      opacity: 0.6;
       z-index: 1; /* AR 콘텐츠 위에 표시 */
+      cursor: move; /* 드래그 가능한 커서 스타일 */
     }
 
     /* 캡처 버튼 스타일 */
@@ -90,42 +95,83 @@
     document.addEventListener("DOMContentLoaded", function() {
       const captureButton = document.getElementById('captureButton');
       const downloadLink = document.getElementById('downloadLink');
-      
+      const overlayImg = document.getElementById('overlay');
+
+      // 드래그 앤 드롭 기능 구현
+      let isDragging = false;
+      let offsetX, offsetY;
+
+      overlayImg.addEventListener('mousedown', (e) => {
+        isDragging = true;
+        offsetX = e.clientX - overlayImg.getBoundingClientRect().left;
+        offsetY = e.clientY - overlayImg.getBoundingClientRect().top;
+        document.addEventListener('mousemove', onMouseMove);
+        document.addEventListener('mouseup', onMouseUp);
+      });
+
+      function onMouseMove(e) {
+        if (isDragging) {
+          const x = e.clientX - offsetX;
+          const y = e.clientY - offsetY;
+          overlayImg.style.left = `${x}px`;
+          overlayImg.style.top = `${y}px`;
+        }
+      }
+
+      function onMouseUp() {
+        isDragging = false;
+        document.removeEventListener('mousemove', onMouseMove);
+        document.removeEventListener('mouseup', onMouseUp);
+      }
+
       captureButton.addEventListener('click', () => {
-        const targetElement = document.querySelector('a-scene');
+        const scene = document.querySelector('a-scene');
+        const renderer = scene.renderer;
+        
+        // Create a new canvas
+        const canvas = document.createElement('canvas');
+        const context = canvas.getContext('2d');
+        
+        // Set canvas dimensions to match the scene
+        canvas.width = scene.clientWidth;
+        canvas.height = scene.clientHeight;
+        
+        // Render the scene to the canvas
+        const dataURL = renderer.toDataURL('image/png');
+        
+        const image = new Image();
+        image.src = dataURL;
 
-        html2canvas(targetElement).then(canvas => {
-          const ctx = canvas.getContext('2d');
-          const overlayImg = document.getElementById('overlay');
+        image.onload = () => {
+          // Draw the scene image to the canvas
+          context.drawImage(image, 0, 0);
 
-          overlayImg.onload = () => {
-            const overlayWidth = overlayImg.width;
-            const overlayHeight = overlayImg.height;
-            const overlayX = 0;
-            const overlayY = canvas.height - overlayHeight;
+          // Draw the overlay image
+          const overlayWidth = overlayImg.width;
+          const overlayHeight = overlayImg.height;
+          const overlayX = parseInt(overlayImg.style.left, 10) || 0;
+          const overlayY = parseInt(overlayImg.style.top, 10) || 0;
 
-            ctx.drawImage(overlayImg, overlayX, overlayY, overlayWidth, overlayHeight);
+          context.drawImage(overlayImg, overlayX, overlayY, overlayWidth, overlayHeight);
 
-            const imgURL = canvas.toDataURL('image/png');
+          const imgURL = canvas.toDataURL('image/png');
 
-            const img = document.createElement('img');
-            img.src = imgURL;
-            img.style.maxWidth = '300px';
-            document.getElementById('screenshotContainer').innerHTML = '';
-            document.getElementById('screenshotContainer').appendChild(img);
+          const img = document.createElement('img');
+          img.src = imgURL;
+          img.style.maxWidth = '300px';
+          document.getElementById('screenshotContainer').innerHTML = '';
+          document.getElementById('screenshotContainer').appendChild(img);
 
-            downloadLink.href = imgURL;
-            downloadLink.style.display = 'block';
-            downloadLink.click();
-          };
+          downloadLink.href = imgURL;
+          downloadLink.style.display = 'block';
+          downloadLink.click();
+        };
 
-          if (overlayImg.complete) {
-            overlayImg.onload();
-          }
-        });
+        image.onerror = (error) => {
+          console.error('Error loading scene image:', error);
+        };
       });
     });
   </script>
-  <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
 </body>
 </html>
