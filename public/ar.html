@@ -111,22 +111,34 @@
       const downloadLink = document.getElementById('downloadLink');
       const overlayImg = document.getElementById('overlay');
 
-      // 드래그 앤 드롭 기능 구현
+      // 드래그 앤 드롭 기능 구현 (터치 지원 추가)
       let isDragging = false;
       let offsetX, offsetY;
 
-      overlayImg.addEventListener('mousedown', (e) => {
+      function startDragging(e) {
         isDragging = true;
         offsetX = e.clientX - overlayImg.getBoundingClientRect().left;
         offsetY = e.clientY - overlayImg.getBoundingClientRect().top;
         document.addEventListener('mousemove', onMouseMove);
         document.addEventListener('mouseup', onMouseUp);
-      });
+        document.addEventListener('touchmove', onTouchMove);
+        document.addEventListener('touchend', onTouchEnd);
+      }
 
       function onMouseMove(e) {
         if (isDragging) {
           const x = e.clientX - offsetX;
           const y = e.clientY - offsetY;
+          overlayImg.style.left = `${x}px`;
+          overlayImg.style.top = `${y}px`;
+        }
+      }
+
+      function onTouchMove(e) {
+        if (isDragging) {
+          const touch = e.touches[0];
+          const x = touch.clientX - offsetX;
+          const y = touch.clientY - offsetY;
           overlayImg.style.left = `${x}px`;
           overlayImg.style.top = `${y}px`;
         }
@@ -138,11 +150,22 @@
         document.removeEventListener('mouseup', onMouseUp);
       }
 
+      function onTouchEnd() {
+        isDragging = false;
+        document.removeEventListener('touchmove', onTouchMove);
+        document.removeEventListener('touchend', onTouchEnd);
+      }
+
+      overlayImg.addEventListener('mousedown', startDragging);
+      overlayImg.addEventListener('touchstart', startDragging);
+
       captureButton.addEventListener('click', () => {
         const scene = document.querySelector('a-scene');
+        
+        // A-Frame 씬의 크기를 계산하여 html2canvas에 전달
+        const { offsetWidth: width, offsetHeight: height } = scene;
 
-        // Capture the scene with html2canvas
-        html2canvas(scene, { scale: window.devicePixelRatio }).then(canvas => {
+        html2canvas(scene, { scale: window.devicePixelRatio, width, height }).then(canvas => {
           const context = canvas.getContext('2d');
 
           // 오버레이 이미지의 위치와 크기
