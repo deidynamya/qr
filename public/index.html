@@ -3,7 +3,7 @@
 <head>
   <title>AR.js Example</title>
   <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
-  <script src="https://cdn.rawgit.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
+  <script src="https://cdn.jsdelivr.net/gh/AR-js-org/AR.js/aframe/build/aframe-ar.js"></script>
 </head>
 <body style="margin: 0; overflow: hidden;">
   <a-scene embedded arjs>
@@ -14,5 +14,15 @@
     <!-- 카메라 설정 -->
     <a-entity camera></a-entity>
   </a-scene>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function() {
+      console.log("DOM content loaded");
+    });
+
+    window.addEventListener("load", function() {
+      console.log("Window loaded");
+    });
+  </script>
 </body>
 </html>
